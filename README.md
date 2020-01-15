@@ -38,6 +38,8 @@ To run and configure Pulp, you have 2 options:
 
 - `PULP_REDIS_URL` (eg. `redis://redis.pulp.svc.cluster.local:6379/1`)
 
+- `PULP_ADMIN_PASSWORD`
+
 - `CONTENT_ORIGIN` - pointer to content service (eg. `https://pulp.example.com:24816`)
 - `CONTENT_PATH_PREFIX` - defaults to `/pulp/content/`
 
@@ -62,7 +64,8 @@ django-admin migrate --noinput
 ```
 
 However you should set admin password on your own by exec in pulp-api
-container and running:
+container and running following command. Or set `PULP_ADMIN_PASSWORD`
+variable.
 
 ```
 django-admin reset-admin-password --password <yoursecretpassword>
@@ -74,5 +77,8 @@ To deploy pulp locally for development and testing purposes, use
 docker-compose:
 
 ```
+mkdir -p .volume/pulp && chown 995:995 .volume/pulp
 docker-compose up
 ```
+
+Then you can access Pulp on http://localhost:24817/pulp/api/v3/
