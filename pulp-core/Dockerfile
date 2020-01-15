@@ -1,8 +1,9 @@
 FROM fedora:31 as build
 ENV PYTHONUNBUFFERED 1
 
-ENV PULP_GIT="https://github.com/pulp/pulpcore.git"
-ENV PULP_REF="2d84e2edabeeff56e718e273128ab6a65cf93c16"
+# Plugins requies older version than one from Git (3.1)
+#ENV PULP_GIT="https://github.com/pulp/pulpcore.git"
+#ENV PULP_REF="2d84e2edabeeff56e718e273128ab6a65cf93c16"
 
 # Install build dependencies
 RUN yum install -y \
@@ -24,30 +25,33 @@ RUN yum install -y \
       zlib-devel \
       expat-devel \
       libmodulemd-devel \
+      gobject-introspection-devel \
+      cairo-gobject-devel \
       zchunk-devel
 
 # Install pulp
 RUN virtualenv -p python3 /opt/pulp
-RUN git clone $PULP_GIT /usr/src/pulpcore && \
-    cd /usr/src/pulpcore && git checkout $PULP_REF && \
-    /opt/pulp/bin/pip install --no-cache-dir -e .[postgres]
+#RUN git clone $PULP_GIT /usr/src/pulpcore && \
+#    cd /usr/src/pulpcore && git checkout $PULP_REF && \
+#    /opt/pulp/bin/pip install -e .[postgres]
 
 # Install plugins
-RUN /opt/pulp/bin/pip install pulp-file pulp-container pulp-rpm
+RUN /opt/pulp/bin/pip install pulpcore pulp-file pulp-container pulp-rpm pip django-storages[boto3] django-storages[azure] gunicorn
 
 ## Main image
 FROM fedora:31
 ENV PYTHONUNBUFFERED 1
 ENV PATH /opt/pulp/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-ENV PULP_DATABASES__default__ENGINE="django.db.backends.postgresql_psycopg2" \
+ENV DJANGO_SETTINGS_MODULE="pulpcore.app.settings" \
+    PULP_DATABASES__default__ENGINE="django.db.backends.postgresql_psycopg2" \
     PULP_DATABASES__default__NAME="pulp" \
     PULP_DATABASES__default__USER="pulp"
 
 COPY --from=build /opt/pulp /opt/pulp
 
 ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini
 
 RUN useradd --system -m -d /var/lib/pulp -s /sbin/nologin pulp
@@ -62,8 +66,10 @@ RUN yum install -y curl \
       zlib \
       file-libs \
       libmodulemd \
+      gobject-introspection \
       expat \
       zchunk-libs \
     && yum clean all
 
 WORKDIR /var/lib/pulp
+USER pulp

@@ -21,6 +21,8 @@ services:
       - redis
     ports:
       - '24817:24817'
+    volumes:
+      - ./.volume/pulp:/var/lib/pulp
   content:
     image: pulp-content
     env_file: .env
@@ -29,6 +31,8 @@ services:
       - api
     ports:
       - '24816:24816'
+    volumes:
+      - ./.volume/pulp:/var/lib/pulp
   resource-manager:
     image: pulp-resource-manager
     env_file: .env
@@ -36,6 +40,8 @@ services:
       - db
       - api
       - redis
+    volumes:
+      - ./.volume/pulp:/var/lib/pulp
   worker:
     image: pulp-worker
     env_file: .env
@@ -43,3 +49,5 @@ services:
       - db
       - api
       - redis
+    volumes:
+      - ./.volume/pulp:/var/lib/pulp

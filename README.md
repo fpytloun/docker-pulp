@@ -43,6 +43,16 @@ To run and configure Pulp, you have 2 options:
 
 ## Installation
 
+### Volumes
+
+You need to provide /var/lib/pulp or at least /var/lib/pulp/artifacts as a
+persistent shared volume across all pulp containers.
+
+Don't forget to ensure correct permissions (`chown 995:995`).
+
+If you don't want to use shared volume, use alternative backend to
+django-storages, eg. AWS S3 or Azure Blob Storage.
+
 ### First run
 
 pulp-api entrypoint will automatically handle database upgrades by running

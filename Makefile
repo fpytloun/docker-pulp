@@ -26,6 +26,7 @@ release-podman: release-podman-pulp-core \
 
 build-podman-%:
 	$(eval IMAGE := $(patsubst build-podman-%,%,$@))
+	sed -i "s,FROM pulp-core,FROM $(ORG)pulp-core,g" $(IMAGE)/Dockerfile
 	cd $(IMAGE) && podman build --format=docker -t $(ORG)$(IMAGE) .
 
 release-podman-%:
@@ -34,6 +35,7 @@ release-podman-%:
 
 build-%:
 	$(eval IMAGE := $(patsubst build-%,%,$@))
+	sed -i "s,FROM pulp-core,FROM $(ORG)pulp-core,g" $(IMAGE)/Dockerfile
 	cd $(IMAGE) && docker build -t $(ORG)$(IMAGE) .
 
 release-%:
