@@ -31,7 +31,7 @@ build-podman-%:
 
 release-podman-%:
 	$(eval IMAGE := $(patsubst release-podman-%,%,$@))
-	cd $(IMAGE) && podman push $(ORG)$(IMAGE) .
+	cd $(IMAGE) && podman push $(ORG)$(IMAGE)
 
 build-%:
 	$(eval IMAGE := $(patsubst build-%,%,$@))
@@ -40,4 +40,4 @@ build-%:
 
 release-%:
 	$(eval IMAGE := $(patsubst release-%,%,$@))
-	cd $(IMAGE) && docker push $(ORG)$(IMAGE) .
+	cd $(IMAGE) && docker push $(ORG)$(IMAGE)
