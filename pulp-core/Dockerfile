@@ -1,6 +1,17 @@
 FROM fedora:31 as build
 ENV PYTHONUNBUFFERED 1
 
+# https://pypi.org/project/pulpcore/#history
+ENV PULP_VERSION 3.3.1
+
+# NOTE: Extension versions must support pulpcore version!
+# https://pypi.org/project/pulp-file/#history
+ENV PULP_FILE_VERSION 0.3.0
+# https://pypi.org/project/pulp-container/#history
+ENV PULP_CONTAINER_VERSION 1.3.0
+# https://pypi.org/project/pulp-rpm/#history
+ENV PULP_RPM_VERSION 3.3.1
+
 # Plugins requies older version than one from Git (3.1)
 #ENV PULP_GIT="https://github.com/pulp/pulpcore.git"
 #ENV PULP_REF="2d84e2edabeeff56e718e273128ab6a65cf93c16"
@@ -36,7 +47,7 @@ RUN virtualenv -p python3 /opt/pulp
 #    /opt/pulp/bin/pip install -e .[postgres]
 
 # Install plugins
-RUN /opt/pulp/bin/pip install pulpcore pulp-file pulp-container pulp-rpm pip django-storages[boto3] django-storages[azure] gunicorn
+RUN /opt/pulp/bin/pip install pulpcore==$PULP_VERSION pulp-file==$PULP_FILE_VERSION pulp-container==$PULP_CONTAINER_VERSION pulp-rpm==$PULP_RPM_VERSION pip django-storages[boto3] django-storages[azure] gunicorn
 
 ## Main image
 FROM fedora:31
