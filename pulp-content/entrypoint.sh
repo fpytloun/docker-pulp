@@ -7,8 +7,8 @@ echo "[INFO] Collecting static files"
 django-admin collectstatic --noinput
 
 echo "[INFO] Starting content server"
-gunicorn pulpcore.content:server \
-          --bind "0.0.0.0:${PULP_CONTENT_BIND_PORT}" \
-          --worker-class 'aiohttp.GunicornWebWorker' \
-          -w ${PULP_CONTENT_WORKERS} \
-          --access-logfile -
+exec gunicorn pulpcore.content:server \
+              --bind "0.0.0.0:${PULP_CONTENT_BIND_PORT}" \
+              --worker-class 'aiohttp.GunicornWebWorker' \
+              -w ${PULP_CONTENT_WORKERS} \
+              --access-logfile -

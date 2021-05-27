@@ -14,6 +14,6 @@ if [[ -n $PULP_ADMIN_PASSWORD ]]; then
 fi
 
 echo "[INFO] Starting API server"
-gunicorn pulpcore.app.wsgi:application \
-          --bind "0.0.0.0:${PULP_API_BIND_PORT}" \
-          --access-logfile -
+exec gunicorn pulpcore.app.wsgi:application \
+              --bind "0.0.0.0:${PULP_API_BIND_PORT}" \
+              --access-logfile -
