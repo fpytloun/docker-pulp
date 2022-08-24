@@ -1,12 +1,14 @@
 #!/bin/bash -e
 
-PULP_CONTENT_BIND_PORT=${PULP_CONTENT_BIND_PORT:-24816}
-PULP_CONTENT_WORKERS=${PULP_CONTENT_WORKERS:-2}
+source /opt/pulp/scripts/common.sh
 
-echo "[INFO] Collecting static files"
-django-admin collectstatic --noinput
+setup_secret_keys
+ensure_dirs
 
-echo "[INFO] Starting content server"
+log_info "Collecting static files"
+pulpcore-manager collectstatic --noinput
+
+log_info "Starting content server"
 exec gunicorn pulpcore.content:server \
               --bind "0.0.0.0:${PULP_CONTENT_BIND_PORT}" \
               --worker-class 'aiohttp.GunicornWebWorker' \

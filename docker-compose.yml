@@ -33,17 +33,10 @@ services:
       - '24816:24816'
     volumes:
       - ./.volume/pulp:/var/lib/pulp
-  resource-manager:
-    image: pulp-resource-manager
-    env_file: .env
-    depends_on:
-      - db
-      - api
-      - redis
-    volumes:
-      - ./.volume/pulp:/var/lib/pulp
   worker:
     image: pulp-worker
+    deploy:
+      replicas: 2
     env_file: .env
     depends_on:
       - db

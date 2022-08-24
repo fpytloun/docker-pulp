@@ -1,16 +1,16 @@
-FROM fedora:31 as build
+FROM fedora:36 as build
 ENV PYTHONUNBUFFERED 1
 
 # https://pypi.org/project/pulpcore/#history
-ENV PULP_VERSION 3.3.1
+ENV PULP_VERSION 3.20.0
 
 # NOTE: Extension versions must support pulpcore version!
 # https://pypi.org/project/pulp-file/#history
-ENV PULP_FILE_VERSION 0.3.0
+ENV PULP_FILE_VERSION 1.11.1
 # https://pypi.org/project/pulp-container/#history
-ENV PULP_CONTAINER_VERSION 1.3.0
+ENV PULP_CONTAINER_VERSION 2.13.1
 # https://pypi.org/project/pulp-rpm/#history
-ENV PULP_RPM_VERSION 3.3.1
+ENV PULP_RPM_VERSION 3.17.12
 
 # Plugins requies older version than one from Git (3.1)
 #ENV PULP_GIT="https://github.com/pulp/pulpcore.git"
@@ -50,7 +50,7 @@ RUN virtualenv -p python3 /opt/pulp
 RUN /opt/pulp/bin/pip install pulpcore==$PULP_VERSION pulp-file==$PULP_FILE_VERSION pulp-container==$PULP_CONTAINER_VERSION pulp-rpm==$PULP_RPM_VERSION pip django-storages[boto3] django-storages[azure] gunicorn
 
 ## Main image
-FROM fedora:31
+FROM fedora:36
 ENV PYTHONUNBUFFERED 1
 ENV PATH /opt/pulp/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
@@ -65,7 +65,8 @@ ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini
 
-RUN useradd --system -m -d /var/lib/pulp -s /sbin/nologin pulp
+RUN useradd --system -m -d /var/lib/pulp -s /sbin/nologin pulp && \
+    mkdir -p /etc/pulp && chown pulp:pulp /etc/pulp
 
 RUN yum install -y curl \
       python3 \
@@ -81,6 +82,8 @@ RUN yum install -y curl \
       expat \
       zchunk-libs \
     && yum clean all
+
+ADD scripts /opt/pulp/scripts
 
 WORKDIR /var/lib/pulp
 USER pulp

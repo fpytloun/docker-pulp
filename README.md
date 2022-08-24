@@ -4,7 +4,6 @@ Pulp installation consists of 4 containers:
 
 - pulp-api
 - pulp-content
-- pulp-resource-manager
 - pulp-worker
 
 All of these images are using `pulp-core` as a base image.
@@ -30,12 +29,19 @@ To run and configure Pulp, you have 2 options:
    print(''.join(random.choice(chars) for i in range(50)))
    ```
 
+- `PULP_DB_ENCRYPTION_KEY_VALUE`
+
+   ```
+   openssl rand -base64 32
+   ```
+
 - `PULP_DATABASES__default__ENGINE` (defaults to `django.db.backends.postgresql_psycopg2`)
 - `PULP_DATABASES__default__USER` (defaults to `pulp`)
 - `PULP_DATABASES__default__PASSWORD`
 - `PULP_DATABASES__default__NAME` (defaults to `pulp`)
 - `PULP_DATABASES__default__HOST`
 
+- `PULP_CACHE_ENABLED` (defaults to `False`, then Redis will not be used)
 - `PULP_REDIS_URL` (eg. `redis://redis.pulp.svc.cluster.local:6379/1`)
 
 - `PULP_ADMIN_PASSWORD`
