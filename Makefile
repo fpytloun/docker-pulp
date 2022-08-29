@@ -1,5 +1,6 @@
 ORG ?=
 SED := $(shell which gsed || which sed)
+TAG := $(shell git describe --tags --abbrev=0)
 
 images: build-pulp-core \
         build-pulp-api \
@@ -37,4 +38,7 @@ build-%:
 
 release-%:
 	$(eval IMAGE := $(patsubst release-%,%,$@))
-	cd $(IMAGE) && docker push $(ORG)$(IMAGE)
+	cd $(IMAGE) && \
+		docker tag $(ORG)$(IMAGE) $(ORG)$(IMAGE):$(TAG) && \
+		docker push $(ORG)$(IMAGE) && \
+		docker push $(ORG)$(IMAGE):$(TAG)
