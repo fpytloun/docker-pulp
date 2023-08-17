@@ -13,4 +13,5 @@ exec gunicorn pulpcore.content:server \
               --bind "0.0.0.0:${PULP_CONTENT_BIND_PORT}" \
               --worker-class 'aiohttp.GunicornWebWorker' \
               -w ${PULP_CONTENT_WORKERS} \
+              --timeout ${PULP_WORKER_TIMEOUT:-30} \
               --access-logfile -

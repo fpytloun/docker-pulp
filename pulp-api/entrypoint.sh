@@ -19,4 +19,5 @@ fi
 log_info "Starting API server"
 exec gunicorn pulpcore.app.wsgi:application \
               --bind "0.0.0.0:${PULP_API_BIND_PORT}" \
+              --timeout ${PULP_WORKER_TIMEOUT:-30} \
               --access-logfile -
